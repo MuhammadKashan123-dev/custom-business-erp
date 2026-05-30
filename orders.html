@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <style>
+        :root {
+            --bg-main:#020617;
+            --bg-panel:rgba(8,14,28,0.88);
+            --border-soft:rgba(71,85,105,0.24);
+            --text-main:#f8fafc;
+            --text-muted:#94a3b8;
+            --accent:#14b8a6;
+            --shadow:0 24px 80px rgba(0,0,0,0.34);
+        }
+
+        * { box-sizing:border-box; }
+        body {
+            margin:0;
+            min-height:100vh;
+            font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color:var(--text-main);
+            background:
+                radial-gradient(circle at top, rgba(20,184,166,0.12), transparent 26%),
+                linear-gradient(180deg, #01040e 0%, #020817 24%, #01040d 100%);
+        }
+
+        .app-shell {
+            display:grid;
+            grid-template-columns:280px 1fr;
+            min-height:100vh;
+        }
+
+        .sidebar {
+            display:flex;
+            flex-direction:column;
+            gap:1.25rem;
+            padding:1.4rem;
+            border-right:1px solid rgba(71,85,105,0.24);
+            background:rgba(4,8,18,0.72);
+            backdrop-filter:blur(8px);
+        }
+
+        .brand {
+            padding:1rem 1.1rem;
+            border-radius:16px;
+            background:linear-gradient(180deg, rgba(20,184,166,0.24), rgba(14,116,144,0.14));
+            border:1px solid rgba(45,212,191,0.24);
+            box-shadow:var(--shadow);
+        }
+
+        .brand-label {
+            display:block;
+            font-size:0.6rem;
+            text-transform:uppercase;
+            letter-spacing:0.2em;
+            color:rgba(148,163,184,0.78);
+            margin-bottom:0.35rem;
+        }
+
+        .brand-name { display:block; font-size:1.08rem; font-weight:800; }
+
+        .sidebar-nav { display:flex; flex-direction:column; gap:0.4rem; }
+        .sidebar-nav a {
+            text-decoration:none;
+            color:var(--text-main);
+            padding:0.9rem 1rem;
+            border-radius:10px;
+            border:1px solid transparent;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            background:rgba(255,255,255,0.03);
+            transition:0.2s ease;
+        }
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background:rgba(20,184,166,0.12);
+            border-color:rgba(45,212,191,0.28);
+            transform:translateX(2px);
+        }
+
+        .sidebar-footer {
+            margin-top:auto;
+            padding:0.85rem 1rem;
+            border-radius:12px;
+            color:var(--text-muted);
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(71,85,105,0.24);
+            font-size:0.74rem;
+        }
+
+        .main-content { display:flex; flex-direction:column; gap:1.2rem; padding:1.35rem; }
+
+        .topbar {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:1rem;
+            padding:1.1rem 1.2rem;
+            border-radius:18px;
+            background:rgba(8,14,28,0.78);
+            border:1px solid rgba(71,85,105,0.24);
+            box-shadow:var(--shadow);
+        }
+
+        .topbar h1 { margin:0; font-size:1.64rem; }
+        .topbar p { margin:0.3rem 0 0; color:var(--text-muted); }
+
+        .status-chip {
+            display:inline-flex;
+            align-items:center;
+            gap:0.4rem;
+            padding:0.42rem 0.72rem;
+            border-radius:999px;
+            font-size:0.68rem;
+            letter-spacing:0.14em;
+            text-transform:uppercase;
+            font-weight:800;
+            color:#99f6e4;
+            background:rgba(20,184,166,0.14);
+            border:1px solid rgba(45,212,191,0.3);
+        }
+
+        .summary-grid {
+            display:grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap:1rem;
+        }
+
+        .summary-card, .panel {
+            border-radius:20px;
+            border:1px solid rgba(71,85,105,0.24);
+            background: linear-gradient(180deg, rgba(8,13,26,0.88), rgba(6,10,20,0.82));
+            box-shadow:var(--shadow);
+            padding:1rem 1.1rem;
+        }
+
+        .summary-label {
+            display:block;
+            font-size:0.72rem;
+            text-transform:uppercase;
+            letter-spacing:0.18em;
+            color:var(--text-muted);
+        }
+
+        .summary-value {
+            display:block;
+            margin-top:0.68rem;
+            font-size:1.78rem;
+            font-weight:800;
+        }
+
+        .summary-copy {
+            display:block;
+            margin-top:0.4rem;
+            font-size:0.78rem;
+            color:#99f6e4;
+        }
+
+        .panel-grid {
+            display:grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap:1rem;
+        }
+
+        .panel-header {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:1rem;
+            margin-bottom:1rem;
+        }
+
+        .panel h2, .panel h3 { margin:0; font-size:1.06rem; }
+        .panel-subtitle { margin:0.24rem 0 0; color:var(--text-muted); font-size:0.84rem; }
+
+        .order-form {
+            display:flex;
+            flex-direction:column;
+            gap:0.68rem;
+        }
+
+        label {
+            display:flex;
+            flex-direction:column;
+            gap:0.38rem;
+            font-size:0.78rem;
+            color:var(--text-muted);
+            text-transform:uppercase;
+            letter-spacing:0.12em;
+        }
+
+        input[type="text"], input[type="number"] {
+            width:100%;
+            padding:0.78rem 0.82rem;
+            border-radius:10px;
+            border:1px solid rgba(71,85,105,0.28);
+            background:rgba(2,6,23,0.88);
+            color:var(--text-main);
+            font-size:0.92rem;
+        }
+
+        button {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:0.84rem 1rem;
+            border-radius:10px;
+            border:none;
+            cursor:pointer;
+            font-weight:800;
+            color:#02131f;
+            background:linear-gradient(180deg, #67e8f9, #14b8a6);
+        }
+
+        .order-list {
+            display:flex;
+            flex-direction:column;
+            gap:0.62rem;
+            margin-top:0.95rem;
+        }
+
+        .order-item {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:1rem;
+            padding:0.88rem 0.95rem;
+            border-radius:12px;
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(71,85,105,0.24);
+        }
+
+        .order-title { font-weight:700; }
+        .order-meta { display:block; margin-top:0.2rem; color:var(--text-muted); font-size:0.78rem; }
+        .order-status {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:0.26rem 0.55rem;
+            border-radius:999px;
+            background:rgba(20,184,166,0.18);
+            color:#99f6e4;
+            font-size:0.64rem;
+            font-weight:800;
+        }
+
+        @media (max-width: 900px) {
+            .app-shell { grid-template-columns:1fr; }
+            .sidebar { border-right:0; border-bottom:1px solid rgba(71,85,105,0.24); }
+            .summary-grid, .panel-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-label">Enterprise Console</span>
+                <span class="brand-name">Orbit ERP</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/dashboard">Dashboard <span>↗</span></a>
+                <a href="/inventory">Inventory <span>↗</span></a>
+                <a class="active" href="/orders">Orders <span>↗</span></a>
+                <a href="/employees">Employees <span>↗</span></a>
+                <a href="/profile">Profile <span>↗</span></a>
+                <a href="/login">Logout <span>↗</span></a>
+            </nav>
+
+            <div class="sidebar-footer">Order processing • Shipment workflows • Compliance tracking</div>
+        </aside>
+
+        <main class="main-content">
+            <section class="topbar">
+                <div>
+                    <h1>Order Management</h1>
+                    <p>Place and track business orders with controlled fulfillment workflows.</p>
+                </div>
+                <div class="status-chip">● Processing live</div>
+            </section>
+
+            <section class="summary-grid">
+                <article class="summary-card">
+                    <span class="summary-label">Pending orders</span>
+                    <span class="summary-value">18</span>
+                    <span class="summary-copy">Awaiting fulfillment</span>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Shipped today</span>
+                    <span class="summary-value">42</span>
+                    <span class="summary-copy">Across all warehouses</span>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Average lead time</span>
+                    <span class="summary-value">2.4d</span>
+                    <span class="summary-copy">Operational benchmark</span>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Fulfillment rate</span>
+                    <span class="summary-value">96%</span>
+                    <span class="summary-copy">On-time completion</span>
+                </article>
+            </section>
+
+            <section class="panel-grid">
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Place a new order</h2>
+                            <p class="panel-subtitle">Enter order details and push them into fulfillment.</p>
+                        </div>
+                    </div>
+
+                    <form class="order-form" action="/orders" method="post">
+                        <label>Product ID<input type="text" id="product" name="product" required></label>
+                        <label>Quantity<input type="number" id="quantity" name="quantity" required></label>
+                        <button type="submit">Submit order</button>
+                    </form>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Recent activity</h2>
+                            <p class="panel-subtitle">Latest order movements and status updates.</p>
+                        </div>
+                    </div>
+
+                    <div class="order-list">
+                        <div class="order-item">
+                            <div>
+                                <div class="order-title">Order #10482</div>
+                                <span class="order-meta">Product ID 5821 • Qty 14 • Warehouse A</span>
+                            </div>
+                            <span class="order-status">Confirmed</span>
+                        </div>
+                        <div class="order-item">
+                            <div>
+                                <div class="order-title">Order #10481</div>
+                                <span class="order-meta">Product ID 1207 • Qty 8 • Warehouse B</span>
+                            </div>
+                            <span class="order-status">Packing</span>
+                        </div>
+                        <div class="order-item">
+                            <div>
+                                <div class="order-title">Order #10479</div>
+                                <span class="order-meta">Product ID 2954 • Qty 21 • Warehouse C</span>
+                            </div>
+                            <span class="order-status">Shipped</span>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

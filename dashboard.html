@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        :root {
+            --bg-main: #020617;
+            --bg-soft: rgba(9, 14, 27, 0.9);
+            --bg-panel: rgba(8, 15, 29, 0.88);
+            --bg-panel-strong: rgba(11, 19, 36, 0.96);
+            --border-soft: rgba(71, 85, 105, 0.32);
+            --border-strong: rgba(45, 212, 191, 0.32);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #14b8a6;
+            --accent-strong: #0f766e;
+            --accent-soft: rgba(20, 184, 166, 0.16);
+            --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top, rgba(20, 184, 166, 0.14), transparent 28%),
+                linear-gradient(180deg, #01040e 0%, #020817 22%, #01040d 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+            background-size: 26px 26px;
+            mask-image: linear-gradient(180deg, rgba(255,255,255,0.75), transparent 84%);
+            opacity: 0.32;
+        }
+
+        .app-shell {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            padding: 1.4rem;
+            border-right: 1px solid rgba(71, 85, 105, 0.24);
+            background: rgba(4, 8, 18, 0.72);
+            backdrop-filter: blur(8px);
+        }
+
+        .brand {
+            padding: 1rem 1.1rem;
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(20, 184, 166, 0.24), rgba(14, 116, 144, 0.14));
+            border: 1px solid rgba(45, 212, 191, 0.24);
+            box-shadow: var(--shadow);
+        }
+
+        .brand-label {
+            display: block;
+            font-size: 0.66rem;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            color: rgba(148, 163, 184, 0.78);
+            margin-bottom: 0.35rem;
+        }
+
+        .brand-name {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .sidebar h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .sidebar-nav a {
+            text-decoration: none;
+            color: var(--text-main);
+            padding: 0.9rem 1rem;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            background: rgba(255,255,255,0.03);
+            transition: 0.2s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(20, 184, 166, 0.12);
+            border-color: rgba(45, 212, 191, 0.28);
+            transform: translateX(2px);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(71, 85, 105, 0.24);
+            font-size: 0.78rem;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            padding: 1.35rem;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.1rem 1.2rem;
+            border-radius: 18px;
+            border: 1px solid rgba(71, 85, 105, 0.24);
+            background: rgba(8, 14, 28, 0.76);
+            box-shadow: var(--shadow);
+        }
+
+        .topbar-title h1 {
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .topbar-title p {
+            margin: 0.25rem 0 0;
+            color: var(--text-muted);
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 0.48rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(20, 184, 166, 0.14);
+            color: #99f6e4;
+            border: 1px solid rgba(45, 212, 191, 0.34);
+        }
+
+        .hero-card,
+        .panel,
+        .stat-card {
+            border-radius: 20px;
+            border: 1px solid rgba(71, 85, 105, 0.24);
+            background: linear-gradient(180deg, rgba(8, 13, 26, 0.9), rgba(6, 10, 20, 0.84));
+            box-shadow: var(--shadow);
+        }
+
+        .hero-card {
+            display: grid;
+            grid-template-columns: 1.5fr 0.8fr;
+            gap: 1rem;
+            padding: 1.4rem 1.5rem;
+            align-items: center;
+        }
+
+        .hero-card h2 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .hero-card p {
+            margin: 0.65rem 0 0;
+            max-width: 44rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .mini-metric {
+            padding: 0.8rem 0.9rem;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(71, 85, 105, 0.24);
+        }
+
+        .mini-metric .metric-label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+        }
+
+        .mini-metric .metric-value {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-card {
+            padding: 1.1rem 1.1rem 1rem;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.7rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .stat-icon {
+            width: 1.9rem;
+            height: 1.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            background: var(--accent-soft);
+            color: #67e8f9;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.45rem;
+        }
+
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.22rem 0.45rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            background: rgba(20, 184, 166, 0.14);
+            color: #99f6e4;
+        }
+
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 1rem;
+        }
+
+        .panel {
+            padding: 1.15rem 1.15rem 1.1rem;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+
+        .panel-subtitle {
+            margin: 0.2rem 0 0;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+        }
+
+        .legend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .legend-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 0.75rem;
+            align-items: center;
+            padding: 0.72rem 0.82rem;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(71, 85, 105, 0.22);
+        }
+
+        .legend-dot {
+            width: 0.7rem;
+            height: 0.7rem;
+            border-radius: 999px;
+            background: var(--accent);
+        }
+
+        .legend-name {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .legend-value {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #99f6e4;
+        }
+
+        .progress-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .progress-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.32rem;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.74rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(51, 65, 85, 0.84);
+            overflow: hidden;
+        }
+
+        .progress-bar span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #14b8a6, #06b6d4);
+        }
+
+        @media (max-width: 900px) {
+            .app-shell { grid-template-columns: 1fr; }
+            .sidebar { border-right: 0; border-bottom: 1px solid rgba(71, 85, 105, 0.24); }
+            .hero-card, .panel-grid, .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-label">Enterprise Console</span>
+                <span class="brand-name">Orbit ERP</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a class="active" href="/dashboard">Dashboard <span>↗</span></a>
+                <a href="/inventory">Inventory <span>↗</span></a>
+                <a href="/orders">Orders <span>↗</span></a>
+                <a href="/employees">Employees <span>↗</span></a>
+                <a href="/profile">Profile <span>↗</span></a>
+                <a href="/login">Logout <span>↗</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                Live monitoring • Automated workflows • Secure access
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <section class="topbar">
+                <div class="topbar-title">
+                    <h1>Operations Dashboard</h1>
+                    <p>Centralized visibility over inventory, fulfillment, and team activity.</p>
+                </div>
+                <div class="status-chip">● Live Sync</div>
+            </section>
+
+            <section class="hero-card">
+                <div>
+                    <div class="status-chip" style="margin-bottom: 0.9rem;">Executive Overview</div>
+                    <h2>Welcome back, operations lead.</h2>
+                    <p>You have successfully logged in. This workspace now presents daily performance, supply chain readiness, and approvals in a structured executive view.</p>
+                </div>
+
+                <div class="hero-metrics">
+                    <div class="mini-metric">
+                        <span class="metric-label">Revenue</span>
+                        <span class="metric-value">$84.2K</span>
+                    </div>
+                    <div class="mini-metric">
+                        <span class="metric-label">On-time</span>
+                        <span class="metric-value">96.4%</span>
+                    </div>
+                    <div class="mini-metric">
+                        <span class="metric-label">Stock Health</span>
+                        <span class="metric-value">87%</span>
+                    </div>
+                    <div class="mini-metric">
+                        <span class="metric-label">Open Tasks</span>
+                        <span class="metric-value">24</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-label">Total Inventory</div>
+                        </div>
+                        <div class="stat-icon">●</div>
+                    </div>
+                    <div class="stat-value">14,860</div>
+                    <div class="stat-trend">↑ 8.4% this week</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-label">Orders Processed</div>
+                        </div>
+                        <div class="stat-icon">↗</div>
+                    </div>
+                    <div class="stat-value">326</div>
+                    <div class="stat-trend">↑ 12.2% this week</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-label">Active Staff</div>
+                        </div>
+                        <div class="stat-icon">⌁</div>
+                    </div>
+                    <div class="stat-value">58</div>
+                    <div class="stat-trend">● 4 approvals pending</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-label">Fulfillment</div>
+                        </div>
+                        <div class="stat-icon">⚑</div>
+                    </div>
+                    <div class="stat-value">91%</div>
+                    <div class="stat-trend">↑ 6.1% this week</div>
+                </article>
+            </section>
+
+            <section class="panel-grid">
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Operational overview</h3>
+                            <p class="panel-subtitle">Critical business areas requiring attention</p>
+                        </div>
+                        <div class="status-chip">Weekly</div>
+                    </div>
+
+                    <div class="legend-list">
+                        <div class="legend-row">
+                            <span class="legend-dot"></span>
+                            <span class="legend-name">Inventory coverage</span>
+                            <span class="legend-value">87%</span>
+                        </div>
+                        <div class="legend-row">
+                            <span class="legend-dot"></span>
+                            <span class="legend-name">Backorder risk</span>
+                            <span class="legend-value">11%</span>
+                        </div>
+                        <div class="legend-row">
+                            <span class="legend-dot"></span>
+                            <span class="legend-name">Customer approvals</span>
+                            <span class="legend-value">24</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Workflow pulse</h3>
+                            <p class="panel-subtitle">Real-time progress and operational balance</p>
+                        </div>
+                    </div>
+
+                    <div class="progress-stack">
+                        <div class="progress-row">
+                            <div class="progress-meta">
+                                <span>Fulfillment throughput</span>
+                                <span>74%</span>
+                            </div>
+                            <div class="progress-bar"><span style="width:74%"></span></div>
+                        </div>
+                        <div class="progress-row">
+                            <div class="progress-meta">
+                                <span>Inventory replenishment</span>
+                                <span>61%</span>
+                            </div>
+                            <div class="progress-bar"><span style="width:61%"></span></div>
+                        </div>
+                        <div class="progress-row">
+                            <div class="progress-meta">
+                                <span>Approval cycle completion</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="progress-bar"><span style="width:82%"></span></div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
