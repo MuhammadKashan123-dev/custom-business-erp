@@ -13,6 +13,7 @@ This Started as a Learning Project Slowly Transformed into a Whole Web Applicati
 - Rest API
 - Check Employees Tab To Manage Employees
 - CRUD Integrations to Manage Update and Delete Employees
+- Role Based Access to Endpoints
 - Inventory tab To Check All Your Current Inventory
 - Orders Tab To Order Products
 - Analytics Dashboard For Sales Tracking
