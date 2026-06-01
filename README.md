@@ -17,6 +17,10 @@ This Started as a Learning Project Slowly Transformed into a Whole Web Applicati
 - Orders Tab To Order Products
 - Analytics Dashboard For Sales Tracking
 - Profile Endpoint
+- Live Dynamic Employee Search
+- Inventory Priority Watch List
+- Low Stock Warning
+- Logs
 
   ### Tech-Stack
 
